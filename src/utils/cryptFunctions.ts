@@ -1,52 +1,35 @@
-import { createCipheriv, createDecipheriv, randomBytes, scryptSync } from 'crypto';
-import { CRYPT_ALGORITHMS, DEFAULT_CRYPT_ALGORITHM } from '../configs/Envs';
+import { createCipheriv, createDecipheriv, randomBytes } from 'crypto';
+import { ALGORYTHM, INPUT_ENCODING, OUTPUT_ENCODING } from '../configs/Envs';
+import { log_info } from './log';
 
-let test = DEFAULT_CRYPT_ALGORITHM;
+let initVector;
+let keyParser;
 
-const generateIvAndKeyAccordingToAlgo = (algo: string, key: string) => {
-  let bytes = 16,
-    keyLength = 32;
-  switch (algo) {
-    case CRYPT_ALGORITHMS.aes56ctr:
-      bytes = 16;
-      keyLength = 32;
+(function () {
+  let vectorLength, parserLength;
+  switch (ALGORYTHM) {
+    case 'aes256':
     default:
+      vectorLength = 16;
+      parserLength = 32;
       break;
   }
-  return {
-    iv: randomBytes(bytes).toString('hex'),
-    key: Buffer.from(randomBytes(keyLength)),
-  };
+  initVector = randomBytes(vectorLength);
+  keyParser = (secretKey: string) => Buffer.alloc(parserLength, secretKey);
+})();
+
+export const cypher = (text: string, secretKey: string) => {
+  log_info('Crypting with algorythm: ' + ALGORYTHM);
+  const cipher = createCipheriv(ALGORYTHM, keyParser(secretKey), initVector);
+  const dectrypted = cipher.update(text, INPUT_ENCODING, OUTPUT_ENCODING);
+  const finalPart = cipher.final(OUTPUT_ENCODING);
+  return dectrypted + finalPart;
 };
 
-const encrypt = (text: string, secretKey: string) => {
-    console.log(1, "dec");
-  const { iv, key } = generateIvAndKeyAccordingToAlgo(DEFAULT_CRYPT_ALGORITHM, secretKey);
-  console.log(2, iv);
-  console.log(3, key);
-
-  
-  const cipher = createCipheriv(DEFAULT_CRYPT_ALGORITHM, key, iv);
-  console.log(4, cipher);
-  
-  return cipher.update(text, 'utf-8', 'base64') +  cipher.final('base64');
+export const decypher = (encryptedData: string, secretKey: string) => {
+  log_info('Decrypting with algorythm: ' + ALGORYTHM);
+  const decipher = createDecipheriv(ALGORYTHM, keyParser(secretKey), initVector);
+  const dectrypted = decipher.update(encryptedData, OUTPUT_ENCODING, INPUT_ENCODING);
+  const finalPart = decipher.final(INPUT_ENCODING);
+  return (dectrypted + finalPart).toString();
 };
-
-const decrypt = (hash: string, secretKey: string) => {
-  const { iv, key } = generateIvAndKeyAccordingToAlgo(DEFAULT_CRYPT_ALGORITHM, secretKey);
-  const decipher = createDecipheriv(
-    DEFAULT_CRYPT_ALGORITHM,
-    key,
-    iv
-  );
-  const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash, 'hex')), decipher.final()]);
-  return decrpyted.toString();
-};
-
-const secretKey = 'vOVH6sdmpNWjRRIqCc7rdxs01lwHzfr3';
-
-const x = encrypt('pippo', secretKey);
-console.log(x);
-
-console.log(decrypt('pippo', secretKey));
-console.log(decrypt('pippo', secretKey + 'x'));

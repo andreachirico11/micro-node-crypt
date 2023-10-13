@@ -9,10 +9,7 @@ const router = Router();
 
 router.post('/crypt', getRequestBodyValidator(cryptValidator), crypt);
 router.post('/decrypt', getRequestBodyValidator(cryptValidator), decrypt);
-
-
 router.get('/ping', getPing);
-
 router.use('*', unsupportedUrl);
 
 export default router;

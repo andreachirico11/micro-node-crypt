@@ -1,35 +1,39 @@
 import { RequestHandler } from 'express';
-import { SuccessResponse } from '../types/ApiResponses';
+import { BadDecrypt, ServerErrorResp, SuccessResponse } from '../types/ApiResponses';
 import { log_error, log_info } from '../utils/log';
 import { CryptReq } from '../types/RequestTypes';
+import { cypher, decypher as decrpyter } from '../utils/cryptFunctions';
+import { INTERNAL_SERVER } from '../types/ErrorCodes';
 
-export const crypt: RequestHandler = ({body: {input, secretKey}}: CryptReq, res) => {
-  try {
-    log_info('Start crypting String: ' + input + " with secret: " + secretKey);
-
-    let output = 'crypteddddd';
-
-    return new SuccessResponse(res, {
-      crypted: output,
-    });
-  } catch (error) {
-    log_error(error, 'Error crypting');
-
-  }
+const sharedMiddleware = (type: 'crypt' | 'decrypt') => {
+  const reqHandler: RequestHandler = ({ body: { input, secretKey } }: CryptReq, res) => {
+    try {
+      log_info(
+        `Start ${
+          type === 'crypt' ? 'crypting' : 'decrypting'
+        } String: ${input} with secret: ${secretKey}`
+      );
+      const output =
+        type === 'crypt'
+          ? {
+              crypted: cypher(input, secretKey),
+            }
+          : {
+              decrypted: decrpyter(input, secretKey),
+            };
+      log_info(`${type === 'crypt' ? 'Crypted' : 'Decrypted'} Successfully`);
+      return new SuccessResponse(res, output);
+    } catch (error) {
+      log_error(error, `Error ${type === 'crypt' ? 'crypting' : 'decrypting'}`);
+      if (error['code'] === 'ERR_OSSL_BAD_DECRYPT') {
+        return new BadDecrypt(res, ["Input or Secret are Wrong"]);
+      }
+      return new ServerErrorResp(res, INTERNAL_SERVER);
+    }
+  };
+  return reqHandler;
 };
 
-export const decrypt: RequestHandler = ({body: {input, secretKey}}: CryptReq, res) => {
-  try {
-    log_info('Start decrypting String: ' + input + " with secret: " + secretKey);
+export const crypt: RequestHandler = sharedMiddleware('crypt');
 
-
-    let output = 'crypteddddd';
-
-    return new SuccessResponse(res, {
-      decrypted: output,
-    });
-  } catch (error) {
-    log_error(error, 'Error decrypting');
-
-  }
-};
+export const decrypt: RequestHandler = sharedMiddleware('decrypt');

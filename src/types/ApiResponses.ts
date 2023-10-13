@@ -1,5 +1,5 @@
 import { Response } from 'express';
-import { ErrorCodes, VALIDATION } from './ErrorCodes';
+import { BAD_DECRYPT, ErrorCodes, VALIDATION } from './ErrorCodes';
 
 const sender = (res: Response, status, json: any) => res.status(status).json(json);
 
@@ -33,5 +33,11 @@ export class NotFoundResp extends ErrorResponse {
 export class ValidationErrResp extends ErrorResponse {
     constructor(res: Response, errors: string[] = null) {
         super(res, 422, VALIDATION, errors);
+    }
+}
+
+export class BadDecrypt extends ErrorResponse {
+    constructor(res: Response, errors: string[] = null) {
+        super(res, 422, BAD_DECRYPT, errors);
     }
 }
