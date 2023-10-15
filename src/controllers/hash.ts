@@ -21,11 +21,9 @@ export const compare: RequestHandler = ({body: {compareWith, hash}}: CompareReq,
   try {
     log_info("Start Comparing process");
     const compareResult = comparer(hash, compareWith);
-    log_info("ComparedSuccessfully Successfully, comparison is " + compareResult ? 'positive' : 'negative');
+    log_info("Compared Successfully");
     return  new SuccessResponse(res, {compareResult});
   } catch (error) {
-    // gestire il caso false compare
-
     return new ServerErrorResp(res, INTERNAL_SERVER);
   }
 }
