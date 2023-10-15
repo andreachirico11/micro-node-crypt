@@ -10,6 +10,7 @@ const defaultEnvs: IEnvs = {
   ALGORYTHM: 'aes256',
   INPUT_ENCODING: 'utf-8',
   OUTPUT_ENCODING: 'hex',
+  SALT_ROUNDS: 12
 };
 
 let { error, parsed: preParsingVars } = config({});
@@ -26,6 +27,7 @@ export const {
   ALGORYTHM = defaultEnvs.ALGORYTHM,
   INPUT_ENCODING = defaultEnvs.INPUT_ENCODING,
   OUTPUT_ENCODING = defaultEnvs.OUTPUT_ENCODING,
+  SALT_ROUNDS = defaultEnvs.SALT_ROUNDS
 } = parsedEnvs;
 
 log_info(
@@ -36,6 +38,7 @@ log_info(
     ALGORYTHM,
     INPUT_ENCODING,
     OUTPUT_ENCODING,
+    SALT_ROUNDS
   },
   '--------- Actual Environments -------'
 );

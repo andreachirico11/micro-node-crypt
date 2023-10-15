@@ -9,5 +9,6 @@ export default interface IEnvs extends ParsedVariables {
     ALGORYTHM: Algorythm;
     INPUT_ENCODING: Encoding;
     OUTPUT_ENCODING: Encoding;
+    SALT_ROUNDS: number;
   }
   

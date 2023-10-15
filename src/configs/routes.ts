@@ -4,11 +4,15 @@ import { unsupportedUrl } from '../controllers/unsuportedUrl';
 import { crypt, decrypt } from '../controllers/crypt';
 import { getRequestBodyValidator } from '../controllers/validators';
 import { cryptValidator } from '../validators/crypt';
+import { compareValidator, hashValidator } from '../validators/hash';
+import { compare, hash } from '../controllers/hash';
 
 const router = Router();
 
 router.post('/crypt', getRequestBodyValidator(cryptValidator), crypt);
 router.post('/decrypt', getRequestBodyValidator(cryptValidator), decrypt);
+router.post('/hash', getRequestBodyValidator(hashValidator), hash);
+router.post('/hashCompare', getRequestBodyValidator(compareValidator), compare);
 router.get('/ping', getPing);
 router.use('*', unsupportedUrl);
 
