@@ -10,7 +10,9 @@ const defaultEnvs: IEnvs = {
   ALGORYTHM: 'aes256',
   INPUT_ENCODING: 'utf-8',
   OUTPUT_ENCODING: 'hex',
-  SALT_ROUNDS: 12
+  SALT_ROUNDS: 12,
+  API_KEY_CHARS: '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz',
+  API_KEY_DEFAULT_LENGTH: 20
 };
 
 let { error, parsed: preParsingVars } = config({});
@@ -27,7 +29,9 @@ export const {
   ALGORYTHM = defaultEnvs.ALGORYTHM,
   INPUT_ENCODING = defaultEnvs.INPUT_ENCODING,
   OUTPUT_ENCODING = defaultEnvs.OUTPUT_ENCODING,
-  SALT_ROUNDS = defaultEnvs.SALT_ROUNDS
+  SALT_ROUNDS = defaultEnvs.SALT_ROUNDS,
+  API_KEY_CHARS = defaultEnvs.API_KEY_CHARS,
+  API_KEY_DEFAULT_LENGTH = defaultEnvs.API_KEY_DEFAULT_LENGTH
 } = parsedEnvs;
 
 log_info(
@@ -38,7 +42,9 @@ log_info(
     ALGORYTHM,
     INPUT_ENCODING,
     OUTPUT_ENCODING,
-    SALT_ROUNDS
+    SALT_ROUNDS,
+    API_KEY_CHARS,
+    API_KEY_DEFAULT_LENGTH
   },
   '--------- Actual Environments -------'
 );

@@ -10,5 +10,7 @@ export default interface IEnvs extends ParsedVariables {
     INPUT_ENCODING: Encoding;
     OUTPUT_ENCODING: Encoding;
     SALT_ROUNDS: number;
+    API_KEY_CHARS: string;
+    API_KEY_DEFAULT_LENGTH: number;
   }
   
